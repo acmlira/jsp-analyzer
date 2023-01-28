@@ -20,7 +20,7 @@
         },
         {
             "label": "Generic JSP reference",
-            "regex": "\"[a-zA-Z0-9/]+.jsp\"",
+            "regex": "(\"[a-zA-Z0-9/]+.jsp\")|(\".jsp\")",
             "files": true
         }
     ]
