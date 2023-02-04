@@ -44,17 +44,20 @@ class Analyzer:
             values.append(sum(1 for match in matches))
         return values
 
-    def __regex_files(self, regex: str) -> list[int]:
+    def __regex_files(self, regex: str) -> list[str]:
         def __matches(regex: str, content: str):
             """
             Return regex matches on content
             """
             return re.finditer(regex, content)
 
+        ignore_files = self.configuration.ignore_files
+
         values = []
         for file in self.directory.files():
             matches = __matches(regex, file.get_data())
-            values.append([match.group(0).replace('"', '') for match in matches])
+            subset = [match.group(0).replace('"', '') for match in matches]
+            values.append(list(set(subset) - set(ignore_files)))
         return values
 
     def analyze(self):
@@ -69,6 +72,12 @@ class Analyzer:
 
             if regex_metrics.files:
                 self.data[f'{regex_metrics.label} files'] = self.__regex_files(regex_metrics.regex)
+
+                includes_list = []
+                for includes in self.data[f'{regex_metrics.label} files'].tolist():
+                    includes_list.append(len(includes))
+
+                self.data[f'{regex_metrics.label} number of files'] = includes_list
 
     def save(self, output_directory = "."):
         """

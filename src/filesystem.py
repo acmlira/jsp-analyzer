@@ -36,7 +36,13 @@ class Directory:
         """
         Return the list of files in directory tree
         """
-        files: list[File] = []
-        for directory, _, file in os.walk(self.base_path + self.relative_path):
-            files.append(File(f'{directory}/{file[0]}'))
-        return files
+        file_list: list[File] = []
+        for directory, _, files in os.walk(self.base_path + self.relative_path):
+            if len(files) > 0:
+                for file in files:
+                    if file.endswith(".jsp"):
+                        _, tail = os.path.split(file)
+                        if tail[0].isupper():
+                            file_list.append(File(f'{directory}/{file}'))
+
+        return file_list

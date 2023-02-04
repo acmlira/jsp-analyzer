@@ -32,9 +32,11 @@ class Configuration:
     """
     def __init__(self,
                  default_metrics: DefaultMetrics,
-                 regex_metrics: list[RegexMetrics]):
+                 regex_metrics: list[RegexMetrics],
+                 ignore_files: list[str]):
         self.default_metrics = default_metrics
         self.regex_metrics = regex_metrics
+        self.ignore_files = ignore_files
 
 class ConfigurationFactory:
     """
@@ -54,9 +56,12 @@ class ConfigurationFactory:
             regex_metrics.append(
                 RegexMetrics(regex_metric.label, regex_metric.regex, regex_metric.files))
         return regex_metrics
+    
+    def __ignore_files(self) -> list[str]:
+        return self.dict_configuration.ignore_files
 
     def new(self) -> Configuration:
         """
         Produce new Configuration object
         """
-        return Configuration(self.__default_metrics(), self.__regex_metrics())
+        return Configuration(self.__default_metrics(), self.__regex_metrics(), self.__ignore_files())
